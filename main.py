@@ -1,9 +1,10 @@
 import random
 import database
 
+print(f"{database.logo}\n")
+
 # List of words & random word
-word_list = ["anto", "carla", "afro", "fanta"]
-chosen_word = random.choice(word_list)
+chosen_word = random.choice(database.word_list)
 
 # code testing
 print(f"The chosen word is {chosen_word}")
@@ -21,13 +22,18 @@ while not game_over:
     print(display)
     user_guess = input("Choose a letter: ").lower()
 
+    for guess in display:
+        if user_guess == guess:
+            print("You've already entered that letter")
+
     # compare user guess to position in chosen word
     for position in range(len(chosen_word)):
         if chosen_word[position] == user_guess:
             display[position] = chosen_word[position]
 
     # subtract a life if guess is not equal to chosen word - print correct ascii based on lives
-    if chosen_word != user_guess:
+    if user_guess not in chosen_word:
+        print(f"{user_guess} is not in the word")
         lives_left -= 1 
         if lives_left == 5:
             print(database.stages[5])
@@ -49,4 +55,3 @@ while not game_over:
         game_over = True
         print("Congratulations, you win.") 
         
- 
