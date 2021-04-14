@@ -1,57 +1,44 @@
 import random
-import database
+from database import stages, logo, word_list
 
-print(f"{database.logo}\n")
+# pick random word
+random_word = random.choice(word_list)
+# print(random_word)
 
-# List of words & random word
-chosen_word = random.choice(database.word_list)
-
-# code testing
-print(f"The chosen word is {chosen_word}")
-
-# list containing blanks for each word of the chosen word
+# create a display list with each letter of random word replaced by underscores
 display = []
-for letter in chosen_word:
+for letter in random_word:
     display += "_"
 
-# user guess and game logic
+print(logo)
+
+lives = 6
 game_over = False
-lives_left = 6
-
+wrong_guesses = set()
+# repeat until there are no more blanks in display
 while not game_over:
-    print(display)
-    user_guess = input("Choose a letter: ").lower()
+    # prompt user for a letter
+    guess = input("Choose a letter: ")
 
-    for guess in display:
-        if user_guess == guess:
-            print("You've already entered that letter")
+    if guess in wrong_guesses:
+        print(f"You already typed {guess}")
 
-    # compare user guess to position in chosen word
-    for position in range(len(chosen_word)):
-        if chosen_word[position] == user_guess:
-            display[position] = chosen_word[position]
+    # loop through random_word, if user guess matches letter than replace ubderscore with letter
+    for index in range(len(random_word)):
+        if guess in random_word[index]:
+            display[index] = guess
+            print(display)
 
-    # subtract a life if guess is not equal to chosen word - print correct ascii based on lives
-    if user_guess not in chosen_word:
-        print(f"{user_guess} is not in the word")
-        lives_left -= 1 
-        if lives_left == 5:
-            print(database.stages[5])
-        elif lives_left == 4: 
-             print(database.stages[4])
-        elif lives_left == 3:
-            print(database.stages[3])    
-        elif lives_left == 2:  
-            print(database.stages[2])  
-        elif lives_left == 1:    
-            print(database.stages[1])
-        elif lives_left == 0:    
-            print(database.stages[0])
-            game_over = True
-            print("You lose.") 
-
-    # if not more _ the loop stops(you win)
-    if "_" not in display:
+    # determine if user won or lost
+    if not "_" in display:
+        print("You won!")
         game_over = True
-        print("Congratulations, you win.") 
-        
+    elif not guess in random_word and not guess in wrong_guesses:
+        wrong_guesses.add(guess)
+        lives -= 1;
+        print(f"The letter {guess} is not in the word.")
+        print(stages[lives])
+        print(f"{display}\n")
+        if lives == 0:
+            print(f"You lost. The word was {random_word}.")
+            game_over = True
